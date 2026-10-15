@@ -1,5 +1,5 @@
-// Cloudflare Pages Function: kontaktformular på fuskir.dk -> mail via Microsoft Graph (Office 365).
-// Miljøvariabler (Cloudflare Pages > Settings > Variables and Secrets):
+// Kontaktformular på fuskir.dk -> mail via Microsoft Graph (Office 365).
+// Variabler (Cloudflare > Workers & Pages > fuskir-dk > Settings > Variables and Secrets):
 //   MS_TENANT_ID, MS_CLIENT_ID, MS_CLIENT_SECRET (hemmelig), MAIL_FROM (afsenderpostkasse), MAIL_TO (modtager)
 const MAX = { navn: 100, email: 120, besked: 2000 };
 
@@ -8,7 +8,7 @@ function done(req, ok) {
   return Response.redirect(new URL(ok ? '/tak/' : '/?fejl=1#kontakt', req.url).toString(), 303);
 }
 
-export async function onRequestPost({ request, env }) {
+export async function handleKontakt(request, env) {
   let fd;
   try { fd = await request.formData(); } catch (e) { return done(request, false); }
   if (clean(fd.get('website'), 200)) return done(request, true); // spam-fælde
@@ -45,8 +45,4 @@ export async function onRequestPost({ request, env }) {
     })
   }).catch(() => null);
   return done(request, !!(res && res.status === 202));
-}
-
-export function onRequest() {
-  return new Response('Method Not Allowed', { status: 405, headers: { Allow: 'POST' } });
 }

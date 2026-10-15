@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fagligt Undervisnings Selskab for Kirurger</title>
+<meta name="description" content="Fagligt Undervisnings Selskab for Kirurger – undervisning og vidensdeling for kirurger i Danmark.">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<header><div class="wrap"><a class="brand" href="/">FUSKIR</a><nav><a href="/" aria-current="page">Forside</a><a href="/begivenheder/">Begivenheder</a><a href="/referater/">Referater</a><a href="/#kontakt">Kontakt</a></nav></div></header>
+<main><div class="wrap">
+<h1>Fagligt Undervisnings Selskab for Kirurger</h1>
+<p class="lead">Selskabet arbejder for at styrke undervisning og vidensdeling inden for videnskabelige, faglige og akademiske emner for kirurger i Danmark.</p>
+<ul class="links">
+<li><a href="/vedtaegter.pdf">Vedtægter (PDF)</a></li>
+<li><a href="/begivenheder/">Kommende begivenheder</a></li>
+<li><a href="/referater/">Referater</a></li>
+</ul>
+
+<h2 id="kontakt">Kontakt os</h2>
+<p id="fejl" class="msg" hidden>Beskeden kunne ikke sendes. Prøv igen lidt senere.</p>
+<form method="post" action="/api/kontakt">
+<label for="navn">Navn *</label><input id="navn" name="navn" required maxlength="100" autocomplete="name">
+<label for="email">E-mail *</label><input id="email" name="email" type="email" required maxlength="120" autocomplete="email">
+<label for="besked">Besked *</label><textarea id="besked" name="besked" required maxlength="2000"></textarea>
+<div class="hp" aria-hidden="true"><label for="website">Lad feltet være tomt</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+<button type="submit">Send</button>
+</form>
+<script>if(location.search.indexOf('fejl=1')>-1)document.getElementById('fejl').hidden=false;</script>
+</div></main>
+<footer><div class="wrap">Fagligt Undervisnings Selskab for Kirurger · fuskir.dk</div></footer>
+</body>
+</html>

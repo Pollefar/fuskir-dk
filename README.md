@@ -1,7 +1,7 @@
 # fuskir.dk
 
 Hjemmeside for Fagligt Undervisnings Selskab for Kirurger.
-Statisk HTML/CSS uden build-trin. Udgives automatisk som Cloudflare Worker (`fuskir-dk`) ved push til `main` (deploy-kommando: `npx wrangler deploy`).
+Statisk HTML/CSS uden build-trin. Udgives automatisk via Cloudflare Pages ved push til `main` (build-kommando: ingen, output-mappe: `public`).
 Teknisk skabelon: Pollefar/vasektomi-dk.
 
 ## Arbejdsregler
@@ -20,12 +20,10 @@ Alt i `public/` bliver offentligt. Intet andet gør.
 - `public/vedtaegter.pdf` – selskabets vedtægter.
 - `public/tak/` – side efter afsendt kontaktformular. `public/404.html` – ukendt side.
 - `public/assets/site.css` – fælles stylesheet. `public/_headers` – sikkerheds- og cacheheaders.
-- `src/worker.js` – Worker: serverer `public/` og sender `/api/kontakt` videre.
-- `src/kontakt.js` – sender kontaktformularen som mail via Microsoft Graph.
-- `wrangler.jsonc` – Worker-opsætning.
+- `functions/api/kontakt.js` – Pages Function: sender kontaktformularen som mail via Microsoft Graph.
 
 ## Kontaktformular
 
-Kræver disse variabler på Workeren (Cloudflare → Workers & Pages → fuskir-dk → Settings → Variables and Secrets):
+Kræver disse variabler i Pages-projektet (Cloudflare → Workers & Pages → fuskir-dk → Settings → Variables and Secrets):
 `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` (hemmelig), `MAIL_FROM`, `MAIL_TO`.
 Samme app-registrering som vasektomi.dk kan genbruges.

@@ -6,17 +6,28 @@ const MAX = { navn: 100, email: 120, besked: 2000 };
 function clean(v, max) { return String(v || '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').trim().slice(0, max); }
 function done(req, ok, why) {
   if ((req.headers.get('Accept') || '').includes('application/json'))
-    return new Response(JSON.stringify({ ok, why: why || null }), { status: ok ? 200 : 500, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+    return new Response(JSON.stringify({ ok, why: ok ? null : (why || null) }), { status: ok ? 200 : 500, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
   return Response.redirect(new URL(ok ? '/tak/' : '/?fejl=1#kontakt', req.url).toString(), 303);
 }
 
 export async function onRequestPost({ request, env }) {
   let fd;
   try { fd = await request.formData(); } catch (e) { return done(request, false, 'formdata'); }
-  if (clean(fd.get('website'), 200)) return done(request, true, 'spam'); // spam-fælde
+  if (clean(fd.get('website'), 200)) return done(request, true, 'spam: felt'); // spam-fælde
+  // Tidsstempel sat af sidens JavaScript. Robotter, der poster direkte, har det ikke,
+  // og mennesker bruger mere end 3 sekunder på at udfylde formularen.
+  const t = clean(fd.get('t'), 20);
+  const sendt = /^k[0-9a-z]+$/.test(t) ? parseInt(t.slice(1), 36) : 0;
+  const alder = Date.now() - sendt;
+  if (!sendt || alder < 3000 || alder > 24 * 3600 * 1000) return done(request, true, 'spam: tid');
   const d = {};
   for (const k of Object.keys(MAX)) d[k] = clean(fd.get(k), MAX[k]);
   if (!d.navn || !d.besked || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) return done(request, false, 'validering');
+  // Indhold, der næsten altid er spam: links, kyrillisk/kinesisk tekst og standardfraser om pris.
+  const alt = d.navn + ' ' + d.besked;
+  if (/https?:\/\/|www\.|\[url|<a\s/i.test(alt) || /[\u0400-\u04FF\u4E00-\u9FFF]/.test(alt)
+      || /volevo sapere il tuo prezzo|wanted to know your price|quería saber su precio|ihren preis wissen/i.test(d.besked))
+    return done(request, true, 'spam: indhold');
   if (!env.MS_TENANT_ID || !env.MS_CLIENT_ID || !env.MS_CLIENT_SECRET || !env.MAIL_FROM || !env.MAIL_TO) return done(request, false, 'mangler: ' + ['MS_TENANT_ID','MS_CLIENT_ID','MS_CLIENT_SECRET','MAIL_FROM','MAIL_TO'].filter(k => !env[k]).join(','));
 
   const tok = await fetch(`https://login.microsoftonline.com/${env.MS_TENANT_ID}/oauth2/v2.0/token`, {

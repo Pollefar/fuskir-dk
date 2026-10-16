@@ -27,9 +27,11 @@
 <label for="email">E-mail *</label><input id="email" name="email" type="email" required maxlength="120" autocomplete="email">
 <label for="besked">Besked *</label><textarea id="besked" name="besked" required maxlength="2000"></textarea>
 <div class="hp" aria-hidden="true"><label for="website">Lad feltet være tomt</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+<input type="hidden" name="t" id="t" value="">
 <button type="submit">Send</button>
 </form>
-<script>if(location.search.indexOf('fejl=1')>-1)document.getElementById('fejl').hidden=false;</script>
+<script>if(location.search.indexOf('fejl=1')>-1)document.getElementById('fejl').hidden=false;
+document.getElementById('t').value='k'+Date.now().toString(36);</script>
 </div></main>
 <footer><div class="wrap">Fagligt Undervisnings Selskab for Kirurger · fuskir.dk</div></footer>
 </body>

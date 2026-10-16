@@ -4,10 +4,10 @@
 const MAX = { navn: 100, email: 120, besked: 2000 };
 
 function clean(v, max) { return String(v || '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').trim().slice(0, max); }
-function done(req, ok, why, side) {
+function done(req, ok, why) {
   if ((req.headers.get('Accept') || '').includes('application/json'))
     return new Response(JSON.stringify({ ok, why: ok ? null : (why || null) }), { status: ok ? 200 : 500, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
-  return Response.redirect(new URL(ok ? (side || '/tak/') : '/?fejl=1#kontakt', req.url).toString(), 303);
+  return Response.redirect(new URL(ok ? '/tak/' : '/?fejl=1#kontakt', req.url).toString(), 303);
 }
 
 export async function onRequestPost({ request, env }) {
@@ -57,8 +57,7 @@ export async function onRequestPost({ request, env }) {
       saveToSentItems: false
     })
   }).catch(() => null);
-  // Særlig tak-side til den tidligere domæneejer.
-  if (res && res.status === 202) return done(request, true, null, /kanalkong/i.test(d.navn) ? '/tak/kanalkongen/' : null);
+  if (res && res.status === 202) return done(request, true);
   let fejl = ''; try { const j = await res.json(); fejl = j.error && j.error.code; } catch (e) {}
   return done(request, false, 'sendMail: ' + (res ? res.status : 'ingen svar') + ' ' + (fejl || ''));
 }

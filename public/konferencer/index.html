@@ -20,6 +20,7 @@
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .k button.chip{margin:0;font:inherit;font-size:.9rem;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--fg);cursor:pointer}
 .k button.chip:hover{border-color:var(--accent)}
+.k button.chip.all{font-weight:600}
 .k button.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .k input[type=search],.k select{font:inherit;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--fg)}
 .k input[type=search]{flex:1 1 220px;min-width:0;width:auto}
@@ -234,6 +235,10 @@ var $=function(id){return document.getElementById(id);};
 
 function buildChips(id,map,key,counts){
   var box=$(id); box.innerHTML="";
+  var all=document.createElement("button");
+  all.type="button"; all.className="chip all"; all.dataset.k="*"; all.textContent="Alle";
+  all.addEventListener("click",function(){sel[key]={}; syncChips(); render();});
+  box.appendChild(all);
   Object.keys(map).forEach(function(k){
     if(!counts[k]) return;
     var b=document.createElement("button");
@@ -241,8 +246,7 @@ function buildChips(id,map,key,counts){
     b.textContent=map[k];
     b.addEventListener("click",function(){
       if(sel[key][k]) delete sel[key][k]; else sel[key][k]=1;
-      b.setAttribute("aria-pressed",sel[key][k]?"true":"false");
-      render();
+      syncChips(); render();
     });
     box.appendChild(b);
   });
@@ -331,7 +335,8 @@ function loadHash(){
 }
 function syncChips(){
   [["f-region","rg"],["f-topic","t"],["f-lang","l"],["f-status","st"]].forEach(function(p){
-    $(p[0]).querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed",sel[p[1]][b.dataset.k]?"true":"false");});
+    var none=Object.keys(sel[p[1]]).length===0;
+    $(p[0]).querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed",(b.dataset.k==="*"?none:!!sel[p[1]][b.dataset.k])?"true":"false");});
   });
 }
 (function init(){

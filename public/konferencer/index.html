@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Konferencer og kurser – FUSKIR</title>
+<meta name="description" content="Overblik over konferencer og kurser for kirurger: endoskopi, proktologi, hernie, dagkirurgi og hudkirurgi. Filtrer efter dato, region, sprog og fagområde.">
+<meta property="og:image" content="https://fuskir.dk/assets/og.png">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+/* Kun konferencesiden. Fælles stil i /assets/site.css */
+.wrap.wide,body:has(.wide) header .wrap,body:has(.wide) footer .wrap{max-width:1040px}
+.k{--ok:#1f6b3a;--ok-bg:#e4f3e8;--warn:#8a5a00;--warn-bg:#fbf0d9;--gray-bg:#eef0ee;--accent-bg:#e6edf4;font-size:16px;line-height:1.5}
+.k .lead{color:var(--muted);max-width:70ch;font-size:1.05rem;margin:0 0 20px}
+.panel{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0 0 10px}
+.row:last-child{margin-bottom:0}
+.lab{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);min-width:84px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.k button.chip{margin:0;font:inherit;font-size:.9rem;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--fg);cursor:pointer}
+.k button.chip:hover{border-color:var(--accent)}
+.k button.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.k input[type=search],.k select{font:inherit;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--fg)}
+.k input[type=search]{flex:1 1 220px;min-width:0;width:auto}
+.k input[type=checkbox]{width:auto;margin:0}
+label.chk{font-size:.9rem;display:flex;gap:6px;align-items:center;cursor:pointer;margin:0;font-weight:400}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 8px}
+#count{color:var(--muted);font-size:.95rem}
+.k button.link{margin:0;font:inherit;background:none;border:0;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline}
+.month{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:22px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.item{display:grid;grid-template-columns:150px 1fr 190px;gap:4px 18px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item .date{font-weight:600;font-variant-numeric:tabular-nums}
+.item .date small{display:block;font-weight:400;color:var(--muted)}
+.name{font-weight:600}
+.name a{text-decoration:none}
+.name a:hover{text-decoration:underline}
+.org,.focus{color:var(--muted);font-size:.92rem}
+.place{font-size:.95rem}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tag{font-size:.75rem;padding:1px 8px;border-radius:999px;background:var(--gray-bg);color:var(--muted)}
+.tag.lang{background:var(--accent-bg);color:var(--accent)}
+.badge{display:inline-block;font-size:.75rem;padding:1px 8px;border-radius:999px;margin-right:6px}
+.b-B{background:var(--ok-bg);color:var(--ok)}
+.b-F{background:var(--warn-bg);color:var(--warn)}
+.b-U{background:var(--gray-bg);color:var(--muted)}
+.rel{font-size:.85rem;color:var(--muted);margin-top:4px}
+.dots{letter-spacing:2px;color:var(--accent)}
+.empty{padding:32px 0;color:var(--muted);text-align:center}
+.foot{margin-top:36px;color:var(--muted);font-size:.88rem;max-width:75ch}
+.foot p{margin:0 0 8px}
+@media (max-width:760px){.item{grid-template-columns:1fr;gap:2px}.lab{min-width:100%}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="brand" href="/"><img src="/assets/logo.png" srcset="/assets/logo.png 1x, /assets/logo-800.png 2.5x" width="160" height="72" alt="Fagligt Undervisnings Selskab for Kirurger"></a><nav><a href="/">Forside</a><a href="/begivenheder/">Begivenheder</a><a href="/konferencer/" aria-current="page">Konferencer og kurser</a><a href="/referater/">Referater</a><a href="/#kontakt">Kontakt</a></nav></div></header>
+<main><div class="wrap wide k">
+<h1>Konferencer og kurser</h1>
+<p class="lead">Udvalgte større møder og praktiske kurser inden for endoskopi, proktologi, hernie, dagkirurgi og hudkirurgi – set fra en dansk speciallægepraksis. Listen gennemgås hver måned; afholdte møder skjules automatisk. Tjek altid arrangørens side før booking.</p>
+
+<section class="panel" aria-label="Filtre">
+    <div class="row"><input id="q" type="search" placeholder="Søg i navn, by, arrangør …" aria-label="Søg"></div>
+    <div class="row"><span class="lab">Region</span><div class="chips" id="f-region"></div></div>
+    <div class="row"><span class="lab">Fagområde</span><div class="chips" id="f-topic"></div></div>
+    <div class="row"><span class="lab">Sprog</span><div class="chips" id="f-lang"></div></div>
+    <div class="row"><span class="lab">Status</span><div class="chips" id="f-status"></div></div>
+    <div class="row">
+      <span class="lab">Visning</span>
+      <label class="chk">Sortér efter
+        <select id="sort"><option value="date">dato</option><option value="rel">relevans</option></select>
+      </label>
+      <label class="chk"><input type="checkbox" id="undated"> Vis møder uden offentliggjort dato</label>
+      <label class="chk"><input type="checkbox" id="past"> Vis afholdte</label>
+    </div>
+  </section>
+
+  <div class="bar"><span id="count"></span><button class="link" id="reset" type="button">Nulstil filtre</button></div>
+  <div id="list"></div>
+
+<div class="foot">
+    <p><span class="badge b-B">Bekræftet</span> dato læst på arrangørens egen side eller en selskabsgodkendt kalender. <span class="badge b-F">Forventet</span> dato fra aggregator eller udledt af den årlige rytme – tjek arrangørens side før booking. <span class="badge b-U">Ikke offentliggjort</span> ingen dato endnu.</p>
+    <p>Relevans er vurderet ud fra speciallægepraksis med endoskopi, proktologi og mindre indgreb, ikke ud fra hospitalskirurgi. Sprog angiver det officielle kongressprog.</p>
+    <p id="updated"></p>
+  </div>
+</div></main>
+<footer><div class="wrap">Fagligt Undervisnings Selskab for Kirurger · fuskir.dk</div></footer>
+<script>
+"use strict";
+var UPDATED = "2026-10-30";
+
+var REGIONS = {DK:"Danmark", NO:"Norden", EU:"Europa", NA:"Nordamerika", OC:"Oceanien", AS:"Asien & øvrige"};
+var TOPICS  = {E:"Endoskopi", P:"Proktologi / kolorektal", H:"Hernie", D:"Dagkirurgi", K:"Generel kirurgi", S:"Hudkirurgi", B:"Bækkenbund"};
+var LANGS   = {da:"Dansk", en:"Engelsk", de:"Tysk", sv:"Svensk", no:"Norsk", fr:"Fransk"};
+var STATUS  = {B:"Bekræftet", F:"Forventet", U:"Ikke offentliggjort"};
+var RELTXT  = {6:"Meget høj", 5:"Høj", 4:"Medium–høj", 3:"Medium", 2:"Lav–medium", 1:"Lav"};
+
+/* name, url, organiser, start, end, place, region, languages, topics, relevance(1-6), status, focus, date label (optional), note (optional) */
+var DATA = [];
+function r(n,u,o,s,e,p,rg,l,t,rel,st,f,lab,note){DATA.push({n:n,u:u,o:o,s:s,e:e,p:p,rg:rg,l:l.split(","),t:t.split(""),rel:rel,st:st,f:f,lab:lab||"",note:note||""});}
+
+/* ---- Danmark ---- */
+r("DKS Årsmøde 2026","https://dks-arsmode.dk","Dansk Kirurgisk Selskab","2026-11-12","2026-11-13","The Hangar, Kastrup","DK","da","K",5,"B","Bredt kirurgisk årsmøde på tværs af subspecialer");
+r("Masterclass i koloskopi","https://www.danskkirurgiskselskab.dk/kalender","DKS / Svendborg Sygehus","2026-11-19","2026-11-20","Svendborg","DK","da","E",5,"F","Hands-on koloskopi","","Årstal ikke angivet i kalenderen; formentlig 2026");
+r("DSDK 29. Årsmøde + 3. Masterclass","https://dsdk.dk/events-aarsmoeder.aspx","Dansk Selskab for Dagkirurgi","2027-04-15","2027-04-17","Sted ikke oplyst","DK","da","D",5,"B","Dagkirurgi, organisation, sundhedsreform","15. apr. (masterclass) + 16.–17. apr. 2027");
+r("DSGH Årsmøde 2027","https://dsgh.dk/kalender/","Dansk Selskab for Gastroenterologi og Hepatologi","2027-09-03","2027-09-04","Kolding (forventet)","DK","da","E",3,"F","Dansk gastro/hepatologi inkl. endoskopi","Primo sep. 2027");
+r("DKS Årsmøde 2027","https://www.danskkirurgiskselskab.dk/kalender","Dansk Kirurgisk Selskab","2027-11-15","2027-11-16","Københavnsområdet (forventet)","DK","da","K",5,"F","Bredt kirurgisk årsmøde","Medio nov. 2027");
+
+/* ---- Norden ---- */
+r("Nordic EUS 2026","https://www.delegia.com/app/netattm/attendee/page/134232","Nordisk EUS-netværk","2026-11-30","2026-12-01","Bergen","NO","en","E",1,"B","Endoskopisk ultralyd");
+r("43. SADE-kursus i avanceret endoskopi","https://sade.dk","Scandinavian Association for Digestive Endoscopy","2027-01-20","2027-01-22","Meet Ullevaal, Oslo","NO","en","E",5,"B","Avanceret endoskopi (EMR/ESD, EUS, kapsel, PEG), hands-on-dag","20. jan. (hands-on) + 21.–22. jan. 2027");
+r("NGF årsmøte 2027","https://www.legeforeningen.no/foreningsledd/fagmed/norsk-gastroenterologisk-forening/moter-og-aktiviteter/nasjonale-moter/","Norsk gastroenterologisk forening","2027-02-11","2027-02-13","Lillehammer","NO","no","E",2,"B","Norsk gastroenterologi");
+r("RAWS-ROCS 2027 Nordics","https://europeanherniasociety.eu/raws-rocs-2027-endorsed-by-the-ehs/","rawsrocsnordics.com (EHS-endorsed)","2027-04-09","2027-04-09","Stockholm","NO","en","H",2,"B","Robotisk bugvægs- og kolorektalkirurgi, 1 dag");
+r("Svenska Gastrodagarna 2027","https://www.gastrodagarna.se/","Svensk Gastroenterologisk Förening","2027-05-12","2027-05-14","Nolia, Umeå","NO","sv","E",3,"B","Svensk gastro/endoskopi");
+r("Kirurgveckan 2027","https://www.kirurgveckan.se/","Svensk Kirurgisk Förening","2027-08-23","2027-08-27","Svenska Mässan, Göteborg","NO","sv","K",3,"B","Svensk kirurgisk uge, alle subspecialer");
+r("Kirurgisk Høstmøte 2027","https://hostmotet.no/","Norsk Kirurgisk Forening","2027-10-25","2027-10-29","Oslo (forventet)","NO","no","K",2,"F","Norsk kirurgisk årsmøde inkl. gastrokirurgi","Uge 43, okt. 2027");
+r("NGF årsmøte 2028","https://www.legeforeningen.no/foreningsledd/fagmed/norsk-gastroenterologisk-forening/moter-og-aktiviteter/nasjonale-moter/","Norsk gastroenterologisk forening","2028-02-10","2028-02-12","Lillehammer","NO","no","E",2,"B","Norsk gastroenterologi");
+r("37th Nordic Congress of Dermatology and Venereology","https://www.nordicdermatology.com/","Nordic Dermatology Association","2028-04-25","2028-04-28","Clarion Hub, Oslo","NO","en","S",3,"B","Bred nordisk dermatologi","","Sprog formentlig engelsk");
+
+/* ---- Europa ---- */
+r("The Pelvic Floor Society Annual Meeting 2026","https://www.acpgbi.org.uk/events/1646/the_pelvic_floor_society_2026_annual_meeting","TPFS (ACPGBI-tilknyttet)","2026-11-04","2026-11-06","Guildford","EU","en","B",3,"B","Bækkenbund, anal fysiologi, praktiske sessioner");
+r("ESSO 45","https://esso45.essoweb.org/","European Society of Surgical Oncology","2026-11-04","2026-11-06","Madrid","EU","en","K",1,"B","Kirurgisk onkologi");
+r("EndoClubNord 2026","https://endoclubnord.de/","EndoClubNord","2026-11-05","2026-11-07","CCH Congress Center, Hamburg","EU","de,en","E",5,"B","Live-endoskopi, ca. 2.250 deltagere; tysk/engelsk med simultantolkning");
+r("St Mark's Frontiers in Colorectal and Intestinal Disease 2026","https://stmarksacademicinstitute.org.uk/courses/frontiers-in-colorectal-and-intestinal-disease2026/","St Mark's Academic Institute","2026-11-18","2026-11-20","RCS London + online","EU","en","PE",5,"B","Kolorektal/proktologi, endoskopi-masterclass; online-mulighed");
+r("20th European Colorectal Congress (ECC)","https://colorectalsurgery.eu/","Medkongress AG","2026-11-28","2026-12-02","Olma Messen, St. Gallen","EU","en","P",5,"B","Didaktisk kolorektal kongres: proktologi, bækkenbund, robot, IBD");
+r("14th British Hernia Society Conference","https://bhs2026.co.uk/","British Hernia Society","2026-11-30","2026-12-01","Royal Armouries, Leeds","EU","en","HD",3,"F","Inguinal/ventral hernie, dagkirurgi");
+r("ESCP 18th Regional Masterclass – Pelvic Floor Pathology","https://www.escp.eu.com/education/masterclass-programme/regional-events","ESCP med RBSS/BSCRS","2027-01-21","2027-01-22","Mechelen, Belgien","EU","en","PB",5,"B","Bækkenbund/proktologi masterclass");
+r("29th Düsseldorf International Endoscopy Symposium","https://endo-duesseldorf.com/","EVK Düsseldorf (WEO/JGES-endorsed)","2027-01-28","2027-01-30","Maritim Hotel Airport, Düsseldorf","EU","en","E",5,"B","Live-endoskopi + hands-on","","Sprog ikke eksplicit oplyst; formentlig engelsk");
+r("39th Belgian Week of Gastroenterology","https://bwge.be/","BSGIE m.fl.","2027-02-17","2027-02-19","BMCC, Brugge","EU","en","E",3,"B","Gastro/endoskopi");
+r("ECCO'27","https://www.ecco-ibd.eu/ecco27","European Crohn's and Colitis Organisation","2027-03-03","2027-03-06","København","EU","en","E",2,"F","IBD","","Officiel side viser både 1.–4. og 3.–6. mar. – bekræft før booking");
+r("53. Deutscher Koloproktologen-Kongress","https://koloproktologen-kongress.de/","Deutsche Gesellschaft für Koloproktologie","2027-03-11","2027-03-13","Kongress am Park, Augsburg","EU","de","P",5,"B","Ren proktologi: hæmorider, fistel, IBD, hands-on-kurser");
+r("144. Deutscher Chirurgie Kongress (DCK 2027)","https://dck2027.de/","DGCH / DGAV","2027-04-21","2027-04-23","ICM, München","EU","de","K",3,"B","Bred tysk kirurgi inkl. viszeralkirurgi","21.–23. apr. 2027 (digitalt 13.–15. apr.)");
+r("ESGE Days 2027","https://esgedays.org/","European Society of Gastrointestinal Endoscopy","2027-04-29","2027-05-01","Centro de Congressos de Lisboa","EU","en","E",5,"B","GI-endoskopi, guidelines, kvalitet, hands-on");
+r("ASGBI International Surgical Congress 2027","https://www.asgbi.org.uk/events/all-events","ASGBI","2027-05-21","2027-05-23","UK (ikke oplyst)","EU","en","K",3,"B","Bred general surgery");
+r("EHS 2027 – 49th Annual International Congress","https://europeanherniasociety.eu/ehs2027/programme/","European Hernia Society","2027-06-02","2027-06-04","Antwerpen","EU","en","HD",4,"B","Hernie: inguinal/ventral, robot, mesh");
+r("Swiss College of Surgeons Annual Meeting 2027","https://scs-congress.ch/","Swiss College of Surgeons","2027-06-02","2027-06-04","KKL, Luzern","EU","de,fr","K",1,"B","Bred kirurgi");
+r("68. Österreichischer Chirurgenkongress","https://www.chirurgenkongress.at/","ÖGCH","2027-06-08","2027-06-11","Salzburg","EU","de","K",1,"F","Østrigsk nationalt kirurgisk kongres");
+r("EAES 2027 – 35th International Congress","https://eaes.eu/eaes-annual-congress/","European Association for Endoscopic Surgery","2027-06-15","2027-06-18","Düsseldorf","EU","en","KH",3,"B","MIS/laparoskopi, hernie, teknologi");
+r("BSG LIVE 2027","https://live.bsg.org.uk/","British Society of Gastroenterology","2027-06-01","2027-06-30","UK","EU","en","E",3,"F","UK's største gastro/endoskopi-møde","Juni 2027 (dato ikke offentliggjort)");
+r("ACPGBI 2027 Annual Meeting","https://www.acpgbi.org.uk/events/1829/acpgbi_2027_annual_meeting_brighton","Association of Coloproctology of GB & Ireland","2027-06-28","2027-06-30","Brighton Centre","EU","en","P",5,"B","Kolorektal/proktologi");
+r("Viszeralmedizin 2027","https://www.viszeralmedizin.com/kongress/zukunft-und-vergangenheit/viszeralmedizin-2027/","DGVS / DGAV","2027-09-13","2027-09-18","Hamburg (først online, så Hamburg)","EU","de","EK",3,"B","Største tysksprogede gastro/viszeralkirurgi-kongres inkl. endoskopisektion");
+r("ESCP 2027 – 22nd Scientific Meeting","https://www.escp.eu.com/conference-and-events/geneva-2027-22nd-scientific-meeting","European Society of Coloproctology","2027-09-01","2027-09-30","Genève","EU","en","P",5,"F","Proktologi/kolorektal; prækongres-kurser (fistel, anorektal ultralyd, OASIS)","Sep. 2027 (dato ikke offentliggjort)");
+r("UEG Week 2027","https://ueg.eu/week","United European Gastroenterology","2027-10-16","2027-10-19","Bella Center, København","EU","en","E",5,"B","GI/endoskopi, hybrid med on-demand");
+r("EndoClubNord 2027","https://endoclubnord.de/","EndoClubNord","2027-11-01","2027-11-07","Hamburg","EU","de,en","E",5,"F","Live-endoskopi","Primo nov. 2027");
+r("The Pelvic Floor Society Annual Meeting 2027","https://www.acpgbi.org.uk/events/1646/the_pelvic_floor_society_2026_annual_meeting","TPFS","2027-11-01","2027-11-30","UK","EU","en","B",3,"F","Bækkenbund","Nov. 2027");
+r("St Mark's Frontiers 2027","https://stmarksacademicinstitute.org.uk/courses/frontiers-in-colorectal-and-intestinal-disease2026/","St Mark's Academic Institute","2027-11-01","2027-11-30","London","EU","en","P",5,"F","Kolorektal/proktologi","Nov. 2027");
+r("21st European Colorectal Congress (ECC) 2027","https://colorectalsurgery.eu/","Medkongress AG","2027-11-27","2027-12-01","Olma Messen, St. Gallen","EU","en","P",5,"F","Som 2026");
+r("ASGBI International Surgical Congress 2028","https://www.asgbi.org.uk/events/all-events","ASGBI","2028-05-10","2028-05-12","UK","EU","en","K",3,"B","Bred general surgery");
+/* Europa – hudkirurgi */
+r("ÖGDV Jahrestagung 2026","https://www.ilds.org/news-events/events/%C3%B6gdv-annual-meeting/","Österreichische Gesellschaft für Dermatologie und Venerologie","2026-11-26","2026-11-28","VIECON Messe, Wien","EU","de","S",2,"B","Bred dermatologi");
+r("BSDS Clinical Meeting","https://bsds.org.uk/?p=33550","British Society for Dermatological Surgery","2026-11-19","2026-11-19","UK (sted ikke oplyst)","EU","en","S",3,"B","Halvdags dermatokirurgi");
+r("BSDS 43rd Annual Surgery Workshop","https://bsds.org.uk/?p=33550","British Society for Dermatological Surgery","2027-03-22","2027-03-24","Bristol","EU","en","S",6,"B","Hands-on basal og øvet hudkirurgi");
+r("DDG-Tagung 2027","https://www.ilds.org/news-events/events/ddg-conference-2027/","Deutsche Dermatologische Gesellschaft","2027-04-21","2027-04-24","CityCube, Berlin","EU","de","S",3,"B","Bred dermatologi inkl. dermatokirurgi");
+r("7th World Congress of Dermoscopy","https://www.ilds.org/news-events/events/","International Dermoscopy Society","2027-05-12","2027-05-15","Lyon","EU","fr","S",3,"B","Dermoskopi og diagnostik","","Sprog ikke oplyst");
+r("EADV Symposium 2027","https://derma.de/termine/kalender/uebersicht/detail/the-annual-eadv-symposium-2027","EADV","2027-05-20","2027-05-22","Dresden","EU","en","S",3,"B","Bred dermatologi");
+r("BAD 107th Annual Meeting (inkl. BSDS-dag)","https://www.clocate.com/annual-meeting-of-the-british-association-of-dermatologists/66858/","British Association of Dermatologists / BSDS","2027-06-01","2027-08-31","UK","EU","en","S",4,"F","Bred dermatologi + dermatokirurgisk dag","Sommer 2027");
+r("36th EADV Congress 2027","https://derma.de/termine/kalender/uebersicht/detail/36th-eadv-congress-2027","EADV","2027-09-22","2027-09-25","RAI, Amsterdam","EU","en","S",4,"B","Bred dermatologi med dermatokirurgi/Mohs-spor");
+r("DGDC 41. Jahrestagung","https://dgdc-2027.de/","Deutsche Gesellschaft für Dermatochirurgie","2027-10-01","2027-10-03","Berlin","EU","de","S",6,"B","Ren dermatokirurgi");
+
+/* ---- Nordamerika ---- */
+r("ASDS Annual Meeting 2026","https://www.asds.net/Medical-Professionals/Members-Resources/ASDS-A-Calendar","American Society for Dermatologic Surgery","2026-11-05","2026-11-08","Marriott Marquis, San Diego","NA","en","S",5,"B","Dermatokirurgi og kosmetik");
+r("ASGE FIESTA 2026","https://www.asge.org/home/about-asge/newsroom/news-list/2026/01/16/asge-announces-slate-of-education-offerings-for-2026","American Society for GI Endoscopy","2026-11-20","2026-11-21","USA (ikke oplyst)","NA","en","E",2,"B","Innovation og endoskopisk teknologi");
+r("SLS MIS Week 2026","https://sls.org/mis2026","Society of Laparoscopic & Robotic Surgeons","2026-12-02","2026-12-05","DoubleTree Universal, Orlando","NA","en","K",2,"B","Multispeciale MIS/robot");
+r("ASGE ESD Course","https://www.asge.org/home/about-asge/newsroom/news-list/2026/01/16/asge-announces-slate-of-education-offerings-for-2026","ASGE","2026-12-05","2026-12-06","USA (ikke oplyst)","NA","en","E",2,"B","ESD hands-on");
+r("NYSGE 50th Annual New York Course","https://nysge.org/annual-course/","New York Society for GI Endoscopy","2026-12-16","2026-12-18","New York Marriott Marquis","NA","en","E",5,"B","Praktisk endoskopi; Masters hands-on (polypresektion, ESD, EUS, sutur); livestream");
+r("Orlando Live! Endoscopy 2027","https://www.adventhealth.com/md/events/orlando-live-endoscopy-2027-17631956","AdventHealth Nicholson Center","2027-02-03","2027-02-05","Celebration (Orlando), FL","NA","en","E",3,"B","Live-endoskopi + hands-on labs");
+r("CDDW 2027","https://www.cag-acg.org/cddw.html","Canadian Association of Gastroenterology","2027-02-26","2027-02-28","Vancouver, BC","NA","en","E",3,"B","Canadisk gastro/endoskopi");
+r("AAD Annual Meeting 2027","https://www.aad.org/member/meetings-education/am27","American Academy of Dermatology","2027-03-19","2027-03-23","San Francisco","NA","en","S",3,"B","Bred dermatologi med kirurgisk spor");
+r("ASCA 2027 Conference & Expo","https://www.ascassociation.org/","Ambulatory Surgery Center Association","2027-03-31","2027-04-03","Orlando World Center Marriott","NA","en","D",1,"F","Drift/økonomi for amerikanske ambulante kirurgicentre (ikke klinisk)");
+r("SAGES 2027 Annual Meeting","https://www.sages.org/meetings/abstracts/","SAGES","2027-04-06","2027-04-09","Las Vegas, NV","NA","en","KEH",3,"B","MIS, fleksibel endoskopi for kirurger, hernie");
+r("ACMS Annual Meeting 2027","https://www.mohscollege.org/education/annual-meeting","American College of Mohs Surgery","2027-04-28","2027-05-02","Atlanta","NA","en","S",5,"B","Mohs, rekonstruktion");
+r("DDW 2027 (inkl. SSAT og AGA-ASGE Postgraduate Course)","https://ddw.org/","AGA / ASGE / AASLD / SSAT","2027-05-15","2027-05-18","Washington, D.C.","NA","en","EK",4,"B","Verdens største GI-møde (over 13.000 deltagere); SSAT = GI-kirurgi");
+r("ASCRS 2027 Annual Scientific Meeting","https://www.fascrs.org/","American Society of Colon and Rectal Surgeons","2027-05-22","2027-05-25","New Orleans, LA","NA","en","PB",6,"B","Proktologi/anorektal benign sygdom, kontorprocedurer, bækkenbund; Tripartite Colorectal Meeting afholdes samtidig");
+r("World Congress of Dermatology 2027","https://www.ilds.org/what-we-do/world-congress-of-dermatology/wcd2027/","ILDS","2027-06-21","2027-06-26","Expo Guadalajara, Mexico","NA","en","S",3,"B","Bred dermatologi (hvert 4. år)","","Sprog ikke oplyst; formentlig engelsk");
+r("ASDS Annual Meeting 2027","https://www.asds.net/Medical-Professionals/Members-Resources/ASDS-A-Calendar","ASDS","2027-10-14","2027-10-17","Hyatt Regency, Chicago","NA","en","S",5,"B","Dermatokirurgi og kosmetik");
+r("ACS Clinical Congress 2027","https://www.facs.org/for-medical-professionals/conferences-and-meetings/clinical-congress-2027/","American College of Surgeons","2027-10-16","2027-10-19","San Diego, CA","NA","en","K",3,"B","Bred kirurgi");
+r("ISDS Annual Meeting 2027","https://www.showsbee.com/fairs/102173-ISDS-Annual-Meeting-2027.html","ISDS","2027-10-01","2027-10-31","TBD","NA","en","S",3,"F","Dermatokirurgi","Ca. okt. 2027");
+r("ACG 2027 Annual Scientific Meeting","https://acgmeetings.gi.org","American College of Gastroenterology","2027-10-22","2027-10-27","USA (by ikke oplyst)","NA","en","E",5,"F","Klinisk gastro, Postgraduate Course, praksisdrift; ASGE-ACG endoskopikursus","","Dato kun fra aggregator");
+r("ACMS Annual Meeting 2028","https://www.mohscollege.org/education/annual-meeting","ACMS","2028-04-26","2028-04-30","Chicago","NA","en","S",5,"B","Mohs");
+r("ASCRS 2028 Annual Scientific Meeting","https://www.fascrs.org/","ASCRS","2028-05-19","2028-05-22","Fort Lauderdale, FL","NA","en","PB",6,"B","Proktologi/anorektal benign sygdom, bækkenbund");
+r("ACS Clinical Congress 2028","https://facs.org/for-medical-professionals/conferences-and-meetings/future-clinical-congress","American College of Surgeons","2028-10-21","2028-10-24","Boston, MA","NA","en","K",3,"B","Bred kirurgi");
+
+/* ---- Oceanien ---- */
+r("NZSG–NZgNC Gastro 2026","https://gastroconference.co.nz/","New Zealand Society of Gastroenterology","2026-11-17","2026-11-20","Te Pae, Christchurch","OC","en","E",3,"B","Gastro/endoskopi, international faculty","17. nov. (masterclass) + 18.–20. nov. 2026");
+r("RACS 95th Annual Scientific Congress 2027","https://www.surgeons.org/conferences-events/college-calendar-of-events/RACS-95th-Annual-Scientific-Congress-2027","Royal Australasian College of Surgeons","2027-04-29","2027-05-02","MCEC, Melbourne","OC","en","K",3,"B","Alle specialer inkl. Colon & Rectal Surgery-sektion","Fra 29. apr. 2027","Kun startdato er officiel");
+r("ACD Annual Scientific Meeting 2027","https://www.dermcoll.edu.au/events/2027-05-14/","Australasian College of Dermatologists","2027-05-14","2027-05-16","Adelaide Convention Centre","OC","en","S",2,"B","Bred dermatologi");
+r("Australasian Skin Cancer Congress 2027","https://www.skincancercollege.org/Conference/Conference/Congress-2027.aspx","Skin Cancer College Australasia","2027-06-25","2027-06-27","The Star, Brisbane + online","OC","en","S",5,"B","Hudkræft i primærsektor, excisioner","","Flyttet fra 21.–23. maj");
+r("21st APFCP & 15th ASSR – Coloproctology 2027","https://www.apfcp2027.org/","CSSANZ / APFCP / ASSR","2027-11-16","2027-11-19","ICC Sydney","OC","en","P",5,"B","Kolorektal/proktologi, stomi");
+
+/* ---- Asien og øvrige ---- */
+r("APHS 2026","https://aphernia.org/?p=3184","Asia Pacific Hernia Society","2026-11-06","2026-11-07","Grand Cube, Osaka","AS","en","H",3,"B","Hernie");
+r("KDDW 2026","https://www.kddw.org/","KSGE + koreanske selskaber","2026-11-19","2026-11-21","Grand Walkerhill, Seoul","AS","en","E",3,"B","Koreansk GI-uge, øvre endoskopi/ESD","","Engelske sessioner; officielt sprog ikke bekræftet");
+r("Emirates Gastroenterology & Hepatology Conference","https://www.eghs.ae/","Emirates Gastroenterology & Hepatology Society","2026-11-21","2026-11-22","Hilton Al Habtoor City, Dubai","AS","en","E",2,"F","Gastro/endoskopi");
+r("APDW 2026","https://www.apdw2026manila.com/","APDW Foundation","2026-11-24","2026-11-28","PICC, Manila","AS","en","E",4,"B","Pan-asiatisk gastro, endoskopi og digestiv kirurgi");
+r("ISDS/HKCD/HKSDV Joint Congress 2026","https://www.ilds.org/news-events/events/isds-hkcd-hksdv-joint-congress-2026/","ISDS + Hong Kong-selskaber","2026-12-04","2026-12-06","HKCEC, Hong Kong","AS","en","S",3,"B","Dermatokirurgi","","Sprog formentlig engelsk");
+r("ASICON 2026","https://asiindia.org/2026/01/21/asicon-2026/","Association of Surgeons of India","2026-12-16","2026-12-19","Ahmedabad","AS","en","K",2,"B","Indisk kirurgisk hovedkongres");
+r("IDEN 2027","https://www.idenworld.org/event/291/","Korean Society of GI Endoscopy","2027-06-10","2027-06-12","Seoul","AS","en","E",5,"B","Rent endoskopimøde, live-demo, hands-on; ca. 1.200 deltagere");
+r("APDW 2027","https://www.apdwcongress.org/","APDW Federation","2027-09-02","2027-09-05","HKCEC, Hong Kong","AS","en","E",4,"F","Pan-asiatisk GI/endoskopi");
+
+/* ---- Uden offentliggjort dato ---- */
+function u(n,url,o,rg,l,t,rel,f,note){r(n,url,o,null,null,"","" + rg,l,t,rel,"U",f,"Ikke offentliggjort",note);}
+u("ESDS Congress","https://esds.eu","European Society for Dermatologic Surgery","EU","en","S",5,"Dermatokirurgi","Siden kunne ikke åbnes (certifikatfejl)");
+u("ESMS meeting","https://esms-mohs.eu/","European Society for Micrographic Surgery","EU","en","S",3,"Mohs");
+u("Endoskopie Live Berlin 2027","https://endoskopie-live-berlin.de/","COCS GmbH","EU","de","E",3,"Live-endoskopi","2026: 8.–9. maj");
+u("Endo Live Roma 2027","https://www.endoliveroma.it/","Università Cattolica / Gemelli","EU","en","E",4,"Live-endoskopi; engelsk faculty","2026: 24.–26. jun.");
+u("BADS Annual Conference 2027","https://daysurgeryuk.net/news/","British Association of Day Surgery","EU","en","D",5,"Dagkirurgi: forløb, LA-hernie, kontorprocedurer","2026: 4.–5. jun., London");
+u("St Mark's Pelvic Floor and Proctology Course 2027","https://stmarksacademicinstitute.org.uk/courses/pelvic-floor-and-proctology-course-2026/","St Mark's Academic Institute","EU","en","PB",5,"Bækkenbund og kompleks proktologi, hybrid","2026: 1.–2. jun.");
+u("London Live Endoscopy 2027","https://www.bsg.org.uk/events/endorsed-event-london-live-endoscopy","BSG-endorsed","EU","en","E",2,"Live-case-diskussion, gratis online","2026: 26.–27. feb.");
+u("Arctic Pelvic Floor Meeting (8.)","https://nekib.helsekompetanse.no/arctic-pelvic-floor-meeting/7th/","NKI/NEKIB","NO","en","B",3,"Bækkenbund, tværfagligt; biennal","Tromsø; 7. var jun. 2024");
+u("DCCG Årsmøde","https://dccg.dk/kalender/","Dansk Colorectal Cancer Gruppe","DK","da","P",1,"Kolorektal cancer","2025 aflyst");
+u("Cleveland Clinic Florida ICDS 2027","https://www.clevelandclinicmeded.com/live/courses/icds/","Cleveland Clinic Florida","NA","en","P",5,"Kolorektal sygdom, videoteknik","Typisk februar");
+u("American Hernia Society Annual Meeting 2027","https://www.americanherniasociety.org/meetings","American Hernia Society","NA","en","H",3,"Hernie","Typisk september");
+u("Canadian Surgery Forum 2027 (inkl. CSCRS)","https://cags-accg.ca/","CAGS m.fl.","NA","en","K",3,"General surgery med kolorektalt spor","Forventet sep. 2027");
+u("ASGE kursuskalender 2027","https://www.asge.org/home/about-asge/newsroom/news-list/2026/01/16/asge-announces-slate-of-education-offerings-for-2026","ASGE","NA","en","E",5,"Masterclass Colonoscopy, STAR Lower EMR m.fl.","Forventet jan. 2027");
+u("NYSGE Annual New York Course 2027","https://nysge.org/annual-course/","NYSGE","NA","en","E",5,"Praktisk endoskopi","Årligt medio december");
+u("Australian Gastroenterology Week (AGW) 2027","https://www.gesa.org.au/","GESA","OC","en","E",3,"Gastro/endoskopi/IBD","2026: 28.–31. aug., Perth");
+u("NZSG Gastro 2027","https://www.nzsg.org.nz/","NZSG","OC","en","E",3,"Gastro/endoskopi","Årligt i november");
+u("APHS 2027","https://aphernia.org/meetings-events/","Asia Pacific Hernia Society","AS","en","H",3,"Hernie","Årligt, efterår");
+
+/* ================= logik ================= */
+var MON = ["jan.","feb.","mar.","apr.","maj","jun.","jul.","aug.","sep.","okt.","nov.","dec."];
+var MONLONG = ["januar","februar","marts","april","maj","juni","juli","august","september","oktober","november","december"];
+function pd(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+function fmt(d){
+  if(!d.s) return d.lab;
+  if(d.lab) return d.lab;
+  var a=pd(d.s), b=pd(d.e||d.s);
+  if(d.s===d.e||!d.e) return a.getDate()+". "+MON[a.getMonth()]+" "+a.getFullYear();
+  if(a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()) return a.getDate()+"."+"–"+b.getDate()+". "+MON[a.getMonth()]+" "+a.getFullYear();
+  if(a.getFullYear()===b.getFullYear()) return a.getDate()+". "+MON[a.getMonth()]+"–"+b.getDate()+". "+MON[b.getMonth()]+" "+a.getFullYear();
+  return a.getDate()+". "+MON[a.getMonth()]+" "+a.getFullYear()+"–"+b.getDate()+". "+MON[b.getMonth()]+" "+b.getFullYear();
+}
+var sel={rg:{},t:{},l:{},st:{}};
+var $=function(id){return document.getElementById(id);};
+
+function buildChips(id,map,key,counts){
+  var box=$(id); box.innerHTML="";
+  Object.keys(map).forEach(function(k){
+    if(!counts[k]) return;
+    var b=document.createElement("button");
+    b.type="button"; b.className="chip"; b.setAttribute("aria-pressed","false"); b.dataset.k=k;
+    b.textContent=map[k];
+    b.addEventListener("click",function(){
+      if(sel[key][k]) delete sel[key][k]; else sel[key][k]=1;
+      b.setAttribute("aria-pressed",sel[key][k]?"true":"false");
+      render();
+    });
+    box.appendChild(b);
+  });
+}
+function countBy(fn){var c={};DATA.forEach(function(d){fn(d).forEach(function(k){c[k]=(c[k]||0)+1;});});return c;}
+
+function visible(d,today,q){
+  if(!d.s && !$("undated").checked) return false;
+  if(d.s && !$("past").checked && pd(d.e||d.s)<today) return false;
+  var any=function(o){return Object.keys(o).length>0;};
+  if(any(sel.rg)&&!sel.rg[d.rg]) return false;
+  if(any(sel.st)&&!sel.st[d.st]) return false;
+  if(any(sel.t)&&!d.t.some(function(x){return sel.t[x];})) return false;
+  if(any(sel.l)&&!d.l.some(function(x){return sel.l[x];})) return false;
+  if(q){
+    var hay=(d.n+" "+d.o+" "+d.p+" "+d.f+" "+d.note).toLowerCase();
+    if(hay.indexOf(q)<0) return false;
+  }
+  return true;
+}
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+
+function render(){
+  var now=new Date(); var today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  var q=$("q").value.trim().toLowerCase();
+  var rows=DATA.filter(function(d){return visible(d,today,q);});
+  var mode=$("sort").value;
+  rows.sort(function(a,b){
+    if(mode==="rel"){ if(b.rel!==a.rel) return b.rel-a.rel; }
+    var as=a.s||"9999", bs=b.s||"9999";
+    return as<bs?-1:as>bs?1:0;
+  });
+  var list=$("list"); list.innerHTML="";
+  $("count").textContent=rows.length+(rows.length===1?" møde":" møder");
+  if(!rows.length){list.appendChild(el("div","empty","Ingen møder matcher de valgte filtre."));saveHash();return;}
+  var lastGroup=null;
+  rows.forEach(function(d){
+    var group = mode==="rel" ? null : (d.s ? (function(){var x=pd(d.s);return MONLONG[x.getMonth()]+" "+x.getFullYear();})() : "Dato ikke offentliggjort");
+    if(group!==lastGroup && group){list.appendChild(el("div","month",group));}
+    lastGroup=group;
+    var it=el("div","item");
+    var c1=el("div","date",fmt(d));
+    if(d.note&&d.s){c1.appendChild(el("small",null,d.note));}
+    var c2=el("div");
+    var nm=el("div","name"); var a=el("a",null,d.n); a.href=d.u; a.target="_blank"; a.rel="noopener noreferrer"; nm.appendChild(a); c2.appendChild(nm);
+    c2.appendChild(el("div","org",d.o));
+    c2.appendChild(el("div","focus",d.f));
+    if(d.note&&!d.s) c2.appendChild(el("div","focus",d.note));
+    var tags=el("div","tags");
+    d.t.forEach(function(x){tags.appendChild(el("span","tag",TOPICS[x]));});
+    d.l.forEach(function(x){tags.appendChild(el("span","tag lang",LANGS[x]||x));});
+    c2.appendChild(tags);
+    var c3=el("div");
+    if(d.p) c3.appendChild(el("div","place",d.p));
+    c3.appendChild(el("div","focus",REGIONS[d.rg]));
+    var bd=el("div","rel");
+    bd.appendChild(el("span","badge b-"+d.st,STATUS[d.st]));
+    c3.appendChild(bd);
+    var rl=el("div","rel"); var dots=el("span","dots",new Array(d.rel+1).join("●")+new Array(7-d.rel).join("○")); dots.setAttribute("aria-hidden","true");
+    rl.appendChild(dots); rl.appendChild(document.createTextNode(" Relevans: "+RELTXT[d.rel])); c3.appendChild(rl);
+    if(d.note&&d.s&&false) c3.appendChild(el("div","rel",d.note));
+    it.appendChild(c1);it.appendChild(c2);it.appendChild(c3);
+    list.appendChild(it);
+  });
+  saveHash();
+}
+function saveHash(){
+  var parts=[];
+  ["rg","t","l","st"].forEach(function(k){var v=Object.keys(sel[k]);if(v.length)parts.push(k+"="+v.join(","));});
+  if($("sort").value!=="date") parts.push("sort="+$("sort").value);
+  if($("undated").checked) parts.push("undated=1");
+  if($("past").checked) parts.push("past=1");
+  if($("q").value.trim()) parts.push("q="+encodeURIComponent($("q").value.trim()));
+  try{history.replaceState(null,"",parts.length?"#"+parts.join("&"):location.pathname+location.search);}catch(e){}
+}
+function loadHash(){
+  var h=location.hash.replace(/^#/,""); if(!h) return;
+  h.split("&").forEach(function(p){
+    var kv=p.split("="), k=kv[0], v=kv.slice(1).join("=");
+    if(sel[k]){v.split(",").forEach(function(x){if(x)sel[k][x]=1;});}
+    else if(k==="sort") $("sort").value=v==="rel"?"rel":"date";
+    else if(k==="undated") $("undated").checked=true;
+    else if(k==="past") $("past").checked=true;
+    else if(k==="q") $("q").value=decodeURIComponent(v);
+  });
+}
+function syncChips(){
+  [["f-region","rg"],["f-topic","t"],["f-lang","l"],["f-status","st"]].forEach(function(p){
+    $(p[0]).querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed",sel[p[1]][b.dataset.k]?"true":"false");});
+  });
+}
+(function init(){
+  buildChips("f-region",REGIONS,"rg",countBy(function(d){return [d.rg];}));
+  buildChips("f-topic",TOPICS,"t",countBy(function(d){return d.t;}));
+  buildChips("f-lang",LANGS,"l",countBy(function(d){return d.l;}));
+  buildChips("f-status",STATUS,"st",countBy(function(d){return [d.st];}));
+  loadHash(); syncChips();
+  ["q"].forEach(function(i){$(i).addEventListener("input",render);});
+  ["sort","undated","past"].forEach(function(i){$(i).addEventListener("change",render);});
+  $("reset").addEventListener("click",function(){
+    sel={rg:{},t:{},l:{},st:{}}; $("q").value=""; $("sort").value="date"; $("undated").checked=false; $("past").checked=false;
+    syncChips(); render();
+  });
+  var u=pd(UPDATED); $("updated").textContent="Sidst opdateret "+u.getDate()+". "+MONLONG[u.getMonth()]+" "+u.getFullYear()+".";
+  render();
+})();
+</script>
+</body>
+</html>

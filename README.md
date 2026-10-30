@@ -16,6 +16,7 @@ Alt i `public/` bliver offentligt. Intet andet gør.
 
 - `public/index.html` – forside med links og kontaktformular.
 - `public/begivenheder/index.html` – kommende begivenheder.
+- `public/konferencer/index.html` – konferencer og kurser. Data ligger i `DATA`-blokken i sidens script (funktionerne `r()`/`u()`), sæt `UPDATED`. Kilde: Claude Doc'en "Kirurgiske gastro-konferencer 2026–2027"; opdateres månedligt af Claude.
 - `public/referater/index.html` – referater, nyeste øverst (kopier en `<div class="entry">`).
 - `public/vedtaegter.pdf` – selskabets vedtægter.
 - `public/tak/` – side efter afsendt kontaktformular. `public/404.html` – ukendt side.
